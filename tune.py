@@ -106,7 +106,7 @@ def main():
                 val_acc = correct / total
                 print(f"Validation accuracy: {val_acc:.2f}")
 
-                results["model_"+str(i)+'_size_'+str(batch_size)+'_lr_'+str(lr)]
+                results["model_"+str(i)+'_size_'+str(batch_size)+'_lr_'+str(lr)] = val_acc
 
     with open('hyperparameter_tuning_results.txt', 'w') as file:
         for key, value in results.items():
