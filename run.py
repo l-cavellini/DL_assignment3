@@ -1,11 +1,10 @@
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
-
+import torch
 from q1 import pad_and_convert_to_tensor
 from data_rnn import load_imdb
-
+from q2_3 import Model2
+from q4 import Model4
+import torch.nn as nn
 
 if torch.backends.mps.is_available():
     DEVICE = torch.device("mps")
@@ -13,31 +12,10 @@ elif torch.cuda.is_available():
     DEVICE = torch.device("cuda")
 else:
     DEVICE = torch.device("cpu")
+print(f"Using device: {DEVICE}")
 
 
-class SimpleSequenceModel(nn.Module):
-    def __init__(
-        self, vocab_size: int, emb_size: int, hidden_size: int, num_classes: int
-    ):
-        super(SimpleSequenceModel, self).__init__()
-        # layer 1
-        self.embedding = nn.Embedding(vocab_size, emb_size)
-        # layer 2
-        self.linear1 = nn.Linear(emb_size, hidden_size)
-        # layer 5
-        self.linear2 = nn.Linear(hidden_size, num_classes)
-
-    def forward(self, x: torch.Tensor):  # x: (batch, time)
-        # layer 1
-        x = self.embedding(x)  # (batch, time, emb)
-        # layer 3
-        x = F.relu(self.linear1(x))  # (batch, time, hidden)
-        # layer 4
-        x, _ = torch.max(x, dim=1)  # Global max pooling (batch, hidden)
-        return self.linear2(x)  # (batch, num_classes)
-
-
-def main():
+def main(model_class=Model4):
     EPOCHS = 10
     BATCH_SIZE = 32
     PAD_LEN = 100
@@ -53,7 +31,7 @@ def main():
     hidden_size = 300
     num_classes = numcls
 
-    model = SimpleSequenceModel(vocab_size, emb_size, hidden_size, num_classes)
+    model = model_class(vocab_size, emb_size, hidden_size, num_classes)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
 
