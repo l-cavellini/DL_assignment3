@@ -1,10 +1,6 @@
 import torch
 import torch.nn as nn
 
-
-import torch
-import torch.nn as nn
-
 class Elman(nn.Module):
     def __init__(self, insize=300, outsize=300, hsize=300):
         super().__init__()
@@ -14,20 +10,20 @@ class Elman(nn.Module):
         # Linear layer for hidden to output transformation
         self.lin2 = nn.Linear(hsize, outsize)
 
-    def forward(self, x, hidden=None):
-        b, t, e = x.size()
+    def forward(self, input_seq, hidden=None):
+        batch_size, seq_length, emb_size = input_seq.size()
         if hidden is None:
-            hidden = torch.zeros(b, self.hsize, dtype=torch.float, device=x.device)
+            hidden = torch.zeros(batch_size, self.hsize, dtype=torch.float, device=input_seq.device)
 
-        outs = []
-        for i in range(t):
+        outputs = []
+        for i in range(seq_length):
             # Concatenating the input and hidden state
-            inp = torch.cat([x[:, i, :], hidden], dim=1)
-            hidden = torch.tanh(self.lin1(inp))
-            out = self.lin2(hidden)
-            outs.append(out[:, None, :])
+            combined_input = torch.cat([input_seq[:, i, :], hidden], dim=1)
+            hidden = torch.tanh(self.lin1(combined_input))
+            output = self.lin2(hidden)
+            outputs.append(output[:, None, :])
 
-        return torch.cat(outs, dim=1), hidden
+        return torch.cat(outputs, dim=1), hidden
 
 
 # nd build a second model, like the one in q2_3.py, but replacing the second layer with an Elman(300, 300, 300) layer

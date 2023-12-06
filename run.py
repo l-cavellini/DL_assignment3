@@ -15,6 +15,7 @@ else:
 print(f"Using device: {DEVICE}")
 
 
+# select model here
 def main(model_class=Model4):
     EPOCHS = 10
     BATCH_SIZE = 32
