@@ -1,2 +1,2 @@
 # DL_assignment3
-Authors: Domentas, Luca, Tim
+Authors: Domantas, Luca, Tim
