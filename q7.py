@@ -27,7 +27,7 @@ def generate_samples(model, start_sequence, i2w, w2i, max_length=50, samples=10)
                 input_tensor = torch.tensor([input_seq], dtype=torch.long)
                 output = model(input_tensor)
                 next_token_logits = output[0, -1, :]
-                next_token = sample(next_token_logits)
+                next_token = sample(next_token_logits, temperature=0.7)
                 next_token_item = next_token.item()
                 input_seq.append(next_token_item)
                 if next_token_item == w2i[".end"]:
